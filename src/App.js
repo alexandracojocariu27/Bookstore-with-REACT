@@ -6,13 +6,23 @@ import Cart from "./components/cart/Cart";
 import axios from 'axios';
 import BooksList from "./components/books/BooksList";
 import CartProvider from "./components/context/CartProvider";
+import Pagination from "./components/pagination/Pagination";
 
 
 function App() {
   
+  // States
   const [apiData, setApiData] = useState([])
   const [showCart, setShowCart] = useState(false);
+  const [currentPage, setcurrentPage] = useState(1);
+  const [itemsPerPage, setitemsPerPage] = useState(4);
 
+  // Pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentPageItems = apiData.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Functions
   const showCartHandler = () => {
     setShowCart(true);
   }
@@ -33,7 +43,8 @@ function App() {
      <CartProvider>
        {showCart ? <Cart onHideCart = {hideCartHandler}/> : null}
        <Header onShowCart = {showCartHandler}></Header>
-       <BooksList books={apiData}></BooksList>
+       <BooksList books={currentPageItems}></BooksList>
+       <Pagination totalItems={apiData.length} itemsPerPage={itemsPerPage} currentPage={currentPage} setcurrentPage={setcurrentPage}/>
      </CartProvider>
   );
 }
